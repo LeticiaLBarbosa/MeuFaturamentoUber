@@ -1,0 +1,12 @@
+MEU FATURAMENTO UBER — APP ANDROID NATIVO
+
+Projeto Android completo (abre em tela cheia, sem navegador; dados no celular).
+
+Gerar o APK sem instalar nada (GitHub, grátis):
+1) Crie um repositório no github.com e envie o conteúdo desta pasta.
+2) Aba "Actions" > "Gerar APK" > Run workflow. Em ~3 min baixe o artefato
+   "MeuFaturamentoUber-apk" e extraia o .apk.
+Ou: abra a pasta no Android Studio > Build > Build APK.
+
+Instalar no celular: copie o .apk para o Android, toque nele e permita
+"Instalar apps desconhecidos" quando pedir.
