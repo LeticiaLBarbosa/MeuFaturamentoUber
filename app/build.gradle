@@ -1,4 +1,5 @@
 plugins { id 'com.android.application' }
+def appVersionCode = (System.getenv('GITHUB_RUN_NUMBER') ?: '1') as Integer
 android {
     namespace 'com.thiago.faturamento'
     compileSdk 34
@@ -6,7 +7,7 @@ android {
         applicationId 'com.thiago.faturamento'
         minSdk 24
         targetSdk 34
-        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1') as Integer
+        versionCode appVersionCode
         versionName '2.1'
     }
     signingConfigs {
