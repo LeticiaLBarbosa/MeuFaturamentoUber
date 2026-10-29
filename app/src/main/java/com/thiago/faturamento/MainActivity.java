@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -18,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 public class MainActivity extends Activity {
     private static final int SAVE_CSV = 1;
     private WebView web;
+    private WebView printWeb;
     private String pendingCsv;
 
     @Override
@@ -47,7 +50,7 @@ public class MainActivity extends Activity {
 
     @Override protected void onPause() { super.onPause(); android.webkit.CookieManager.getInstance().flush(); }
 
-    /** Exportar CSV: o usuário escolhe onde salvar (Downloads, Drive, etc.). */
+    /** Exportar CSV e gerar PDF: pontes chamadas pelo JavaScript da página. */
     class Bridge {
         @JavascriptInterface
         public void saveFile(final String name, final String content) {
@@ -58,6 +61,24 @@ public class MainActivity extends Activity {
                 i.setType("text/csv");
                 i.putExtra(Intent.EXTRA_TITLE, name);
                 startActivityForResult(i, SAVE_CSV);
+            });
+        }
+
+        // window.open()/window.print() não funcionam no WebView: renderiza o relatório
+        // numa WebView oculta e aciona o diálogo nativo de impressão/"Salvar como PDF".
+        @JavascriptInterface
+        public void printReport(final String html) {
+            runOnUiThread(() -> {
+                printWeb = new WebView(MainActivity.this);
+                printWeb.setWebViewClient(new WebViewClient() {
+                    @Override public void onPageFinished(WebView view, String url) {
+                        PrintManager pm = (PrintManager) getSystemService(PRINT_SERVICE);
+                        pm.print("Relatorio Meu Faturamento Uber",
+                                view.createPrintDocumentAdapter("Relatorio Meu Faturamento Uber"),
+                                new PrintAttributes.Builder().build());
+                    }
+                });
+                printWeb.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
             });
         }
     }

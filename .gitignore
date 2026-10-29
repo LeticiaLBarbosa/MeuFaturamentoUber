@@ -1,0 +1,12 @@
+build/
+.gradle/
+.idea/
+*.iml
+local.properties
+.DS_Store
+
+# Chave de assinatura: nunca deve ir para o repositório.
+# No CI ela é recriada a partir dos secrets do GitHub Actions.
+*.keystore
+*.jks
+app/release.keystore

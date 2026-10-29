@@ -6,11 +6,26 @@ android {
         applicationId 'com.thiago.faturamento'
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName '2.0'
+        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1') as Integer
+        versionName '2.1'
+    }
+    signingConfigs {
+        release {
+            def ksPath = System.getenv('ANDROID_KEYSTORE_PATH')
+            if (ksPath) {
+                storeFile file(ksPath)
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+            }
+        }
     }
     buildTypes {
-        release { minifyEnabled false; signingConfig signingConfigs.debug }
+        release {
+            minifyEnabled false
+            // Usa a chave fixa (via secrets no CI) quando disponível, senão cai no debug local.
+            signingConfig System.getenv('ANDROID_KEYSTORE_PATH') ? signingConfigs.release : signingConfigs.debug
+        }
     }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
